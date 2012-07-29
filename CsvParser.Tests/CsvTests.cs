@@ -160,5 +160,21 @@ namespace CsvParser.Tests
 			Assert.Equal("b1\nb2\nb3", line[1]);
 			Assert.Equal("ccc", line[2]);
 		}
+
+		[Fact]
+		public void DelimeterWithinQuotesIsPreserved()
+		{
+			var parser = new CsvParser();
+
+			IEnumerable<string[]> lines = parser.Parse("aaa,\"b1,b2\",ccc");
+
+			Assert.Equal(1, lines.Count());
+			var line = lines.Single();
+
+			Assert.Equal(3, line.Length);
+			Assert.Equal("aaa", line[0]);
+			Assert.Equal("b1,b2", line[1]);
+			Assert.Equal("ccc", line[2]);
+		}
 	}
 }
