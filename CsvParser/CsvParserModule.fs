@@ -16,7 +16,7 @@ let str_ws s = str s .>> ws
 
 let nonQuoteChars = manySatisfy (fun c -> c <> '"')
 let escapedQuote = str ("\"\"")
-let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) <!> "quoted field"
+let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) .>> ws <!> "quoted field"
 
 let nonSpaceOrSep = manySatisfy (function ','|'\n'|' '|'\t' -> false | _ -> true) <!> "nonSpaceOrSep"
 let allowedInterCharSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false) <!> "allowedSpaces"

@@ -103,7 +103,22 @@ namespace CsvParser.Tests
 		}
 
 		[Fact]
-		public void WhiteSpaceIsNotRemovedFromAroundQuotedValues()
+		public void WhiteSpaceWithinQuotesIsPreserved()
+		{
+			var parser = new CsvParser();
+
+			IEnumerable<string[]> lines = parser.Parse("\" aaa\t\",\"\tbbb \"");
+
+			Assert.Equal(1, lines.Count());
+			var line = lines.Single();
+
+			Assert.Equal(2, line.Length);
+			Assert.Equal(" aaa\t", line[0]);
+			Assert.Equal("\tbbb ", line[1]);
+		}
+
+		[Fact]
+		public void WhiteSpaceSurroundingQuotesIsIgnored()
 		{
 			var parser = new CsvParser();
 
@@ -116,21 +131,5 @@ namespace CsvParser.Tests
 			Assert.Equal(" aaa\t", line[0]);
 			Assert.Equal("\tbbb ", line[1]);
 		}
-
-		/*
-		[Fact]
-		public void CanParseBasicQuotedValuesWithWhitespace()
-		{
-			var parser = new CsvParser();
-
-			IEnumerable<string[]> lines = parser.Parse(" \" aaa\t\"\t,\t\"\tbbb \" ");
-
-			Assert.Equal(1, lines.Count());
-			var line = lines.Single();
-
-			Assert.Equal(2, line.Length);
-			Assert.Equal(" aaa\t", line[0]);
-			Assert.Equal("\tbbb ", line[1]);
-		}*/
 	}
 }
