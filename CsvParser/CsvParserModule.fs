@@ -18,15 +18,10 @@ let nonQuoteChars = manySatisfy (fun c -> c <> '"')
 let escapedQuote = str ("\"\"")
 let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) <!> "quoted field"
 
-// let unquotedField = manySatisfy (function ',' | '\n' -> false | _ -> true)
 let nonSpaceOrSep = manySatisfy (function ','|'\n'|' '|'\t' -> false | _ -> true) <!> "nonSpaceOrSep"
-let allowedSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false) <!> "allowedSpaces"
-// let allowedSpaces = manyChars (anyOf " \t")
-// let unquotedField = pipe2 nonSpaceOrSep (many allowedSpaces) (fun hd tl -> hd::tl |> List.reduce (+)) <!> "unquoted field"
-// let unquotedField = pipe2 nonSpaceOrSep (many allowedSpaces) (fun hd tl -> hd::tl |> List.reduce (+)) // <|>% (str "")
-// let unquotedField = pipe2 nonSpaceOrSep (many (allowedSpaces >>. nonSpaceOrSep)) (fun hd tl -> hd::tl |> List.reduce (+)) // <|>% (str "")
-let unquotedField = stringsSepBy nonSpaceOrSep allowedSpaces |>> (fun s -> s.TrimEnd([|' ';'\t'|])) <!> "unquoted field"
-// sepEndBy
+let allowedInterCharSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false) <!> "allowedSpaces"
+let unquotedField = stringsSepBy nonSpaceOrSep allowedInterCharSpaces |>> (fun s -> s.TrimEnd([|' ';'\t'|])) <!> "unquoted field"
+//let unquotedField = manyCharsTill (noneOf ",\n") (pchar ',') << doesn't work because it consumes the comma
 
 let csvValue, csvValueRef = createParserForwardedToRef()
 
@@ -34,8 +29,6 @@ let line = sepBy csvValue (str_ws ",")
 
 do csvValueRef := choice[quotedField
                          unquotedField] <!> "csvValueRef"
-
-// "aaa,bbb"
 
 let csv = ws >>. sepBy line newline .>> ws .>> eof
 
