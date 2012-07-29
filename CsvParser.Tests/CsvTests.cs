@@ -192,5 +192,64 @@ namespace CsvParser.Tests
 			Assert.Equal("", line[1]);
 			Assert.Equal("ccc", line[2]);
 		}
+
+		[Fact]
+		public void CanParseMultipleLines()
+		{
+			var parser = new CsvParser();
+
+			string[][] lines = parser.Parse("aaa,bbb\nccc,ddd").ToArray();
+
+			Assert.Equal(2, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("aaa", lines[0][0]);
+			Assert.Equal("bbb", lines[0][1]);
+
+			Assert.Equal(2, lines[1].Length);
+			Assert.Equal("ccc", lines[1][0]);
+			Assert.Equal("ddd", lines[1][1]);
+		}
+
+		[Fact]
+		public void EmptyLinesAreIgnored()
+		{
+			var parser = new CsvParser();
+
+			// Set up empty lines at start, middle, and end:
+			string[][] lines = parser.Parse("\naaa,bbb\nccc,ddd\n").ToArray();
+
+			Assert.Equal(2, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("aaa", lines[0][0]);
+			Assert.Equal("bbb", lines[0][1]);
+
+			Assert.Equal(2, lines[1].Length);
+			Assert.Equal("ccc", lines[1][0]);
+			Assert.Equal("ddd", lines[1][1]);
+		}
+
+		[Fact]
+		public void LinesWithDifferentFieldLengthsAreHandledWithoutError()
+		{
+			var parser = new CsvParser();
+
+			string[][] lines = parser.Parse("aaa,bbb\nccc,ddd,eee\nfff").ToArray();
+
+			Assert.Equal(3, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("aaa", lines[0][0]);
+			Assert.Equal("bbb", lines[0][1]);
+
+			Assert.Equal(3, lines[1].Length);
+			Assert.Equal("ccc", lines[1][0]);
+			Assert.Equal("ddd", lines[1][1]);
+			Assert.Equal("eee", lines[1][2]);
+
+			Assert.Equal(1, lines[2].Length);
+			Assert.Equal("fff", lines[2][0]);
+		}
 	}
 }
