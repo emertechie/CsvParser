@@ -12,18 +12,18 @@ let str_inline_ws s = str s .>> inline_ws
 
 let nonQuoteChars = manySatisfy (fun c -> c <> '"')
 let escapedQuote = stringReturn "\"\"" "\""
-let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) .>> inline_ws <!> "quoted field"
+let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) .>> inline_ws
 
-let nonSpaceOrSep = manySatisfy (function '|'|'\n'|' '|'\t' -> false | _ -> true) <!> "nonSpaceOrSep"
-let allowedInterCharSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false) <!> "allowedSpaces"
-let unquotedField = stringsSepBy nonSpaceOrSep allowedInterCharSpaces |>> (fun s -> s.TrimEnd([|' ';'\t'|])) <!> "unquoted field"
+let nonSpaceOrSep = manySatisfy (function '|'|'\n'|' '|'\t' -> false | _ -> true)
+let allowedInterCharSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false)
+let unquotedField = stringsSepBy nonSpaceOrSep allowedInterCharSpaces |>> (fun s -> s.TrimEnd([|' ';'\t'|]))
 
 let csvValue, csvValueRef = createParserForwardedToRef()
 
-let line = sepBy csvValue (str_inline_ws "|") <!> "line"
+let line = sepBy csvValue (str_inline_ws "|")
 
 do csvValueRef := choice[quotedField
-                         unquotedField] <!> "csvValueRef"
+                         unquotedField]
 
 let csv = ws >>. sepBy line newline .>> ws .>> eof
 
