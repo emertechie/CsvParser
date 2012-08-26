@@ -13,7 +13,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("aaa,bbb");
+			IEnumerable<string[]> lines = parser.Parse("aaa|bbb");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -28,7 +28,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse(" a , b ");
+			IEnumerable<string[]> lines = parser.Parse(" a | b ");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -44,7 +44,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse(" aaa\t, bbb \t");
+			IEnumerable<string[]> lines = parser.Parse(" aaa\t| bbb \t");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -60,7 +60,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("a a a,b b b");
+			IEnumerable<string[]> lines = parser.Parse("a a a|b b b");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -75,7 +75,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("\"aaa\",\"bbb\"");
+			IEnumerable<string[]> lines = parser.Parse("\"aaa\"|\"bbb\"");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -90,7 +90,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("\" aaa\t\",\"\tbbb \"");
+			IEnumerable<string[]> lines = parser.Parse("\" aaa\t\"|\"\tbbb \"");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -105,7 +105,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse(" \" aaa\t\"\t,\t\"\tbbb \" ");
+			IEnumerable<string[]> lines = parser.Parse(" \" aaa\t\"\t|\t\"\tbbb \" ");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -120,7 +120,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("aaa,\"bbb\",ccc");
+			IEnumerable<string[]> lines = parser.Parse("aaa|\"bbb\"|ccc");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -136,7 +136,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("aaa,\"\"\"bbb\"\"\"");
+			IEnumerable<string[]> lines = parser.Parse("aaa|\"\"\"bbb\"\"\"");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -151,7 +151,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("aaa,\"b1\nb2\nb3\",ccc");
+			IEnumerable<string[]> lines = parser.Parse("aaa|\"b1\nb2\nb3\"|ccc");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -167,7 +167,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("aaa,\"b1,b2\",ccc");
+			IEnumerable<string[]> lines = parser.Parse("aaa|\"b1,b2\"|ccc");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -183,7 +183,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			IEnumerable<string[]> lines = parser.Parse("aaa,,ccc");
+			IEnumerable<string[]> lines = parser.Parse("aaa||ccc");
 
 			Assert.Equal(1, lines.Count());
 			var line = lines.Single();
@@ -199,7 +199,7 @@ namespace CsvParser.Tests
 		{
 			var parser = new CsvParser();
 
-			string[][] lines = parser.Parse("aaa,bbb\nccc,ddd").ToArray();
+			string[][] lines = parser.Parse("aaa|bbb\nccc|ddd").ToArray();
 
 			Assert.Equal(2, lines.Length);
 
@@ -218,7 +218,7 @@ namespace CsvParser.Tests
 			var parser = new CsvParser();
 
 			// Set up empty lines at start, middle, and end:
-			string[][] lines = parser.Parse("\naaa,bbb\nccc,ddd\n").ToArray();
+			string[][] lines = parser.Parse("\naaa|bbb\nccc|ddd\n").ToArray();
 
 			Assert.Equal(2, lines.Length);
 
@@ -232,11 +232,11 @@ namespace CsvParser.Tests
 		}
 
 		[Fact]
-		public void LinesWithDifferentFieldLengthsAreHandledWithoutError()
+		public void LinesWithDifferentColumnCountsAreHandledWithoutError()
 		{
 			var parser = new CsvParser();
 
-			string[][] lines = parser.Parse("aaa,bbb\nccc,ddd,eee\nfff").ToArray();
+			string[][] lines = parser.Parse("aaa|bbb\nccc|ddd|eee\nfff").ToArray();
 
 			Assert.Equal(3, lines.Length);
 
