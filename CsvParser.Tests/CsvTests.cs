@@ -213,6 +213,89 @@ namespace CsvParser.Tests
 		}
 
 		[Fact]
+		public void CanParseMultipleLines_WithQuotesInLastValue()
+		{
+			var parser = new CsvParser();
+
+			string[][] lines = parser.Parse("aaa|\"bbb\"\nccc|\"ddd\"").ToArray();
+
+			Assert.Equal(2, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("aaa", lines[0][0]);
+			Assert.Equal("bbb", lines[0][1]);
+
+			Assert.Equal(2, lines[1].Length);
+			Assert.Equal("ccc", lines[1][0]);
+			Assert.Equal("ddd", lines[1][1]);
+		}
+
+		[Fact]
+		public void CanParseMultipleLines_AllQuoted()
+		{
+			var parser = new CsvParser();
+
+			string[][] lines = parser.Parse("\"aaa\"|\"bbb\"\n\"ccc\"|\"ddd\"").ToArray();
+
+			Assert.Equal(2, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("aaa", lines[0][0]);
+			Assert.Equal("bbb", lines[0][1]);
+
+			Assert.Equal(2, lines[1].Length);
+			Assert.Equal("ccc", lines[1][0]);
+			Assert.Equal("ddd", lines[1][1]);
+		}
+
+		[Fact]
+		public void CanParseMultipleLines_AllWithEscapedQuotes()
+		{
+			var parser = new CsvParser();
+
+			string[][] lines = parser.Parse("\"\"\"aaa\"\"\"|\"\"\"bbb\"\"\"\n\"\"\"ccc\"\"\"|\"\"\"ddd\"\"\"").ToArray();
+
+			Assert.Equal(2, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("\"aaa\"", lines[0][0]);
+			Assert.Equal("\"bbb\"", lines[0][1]);
+
+			Assert.Equal(2, lines[1].Length);
+			Assert.Equal("\"ccc\"", lines[1][0]);
+			Assert.Equal("\"ddd\"", lines[1][1]);
+		}
+
+		[Fact]
+		public void CanParseMultipleLines_WithSeparatorAtBeginningOfSecondLine()
+		{
+			var parser = new CsvParser();
+
+			string[][] lines = parser.Parse("aaa|bbb\n|ccc").ToArray();
+
+			Assert.Equal(2, lines.Length);
+
+			Assert.Equal(2, lines[0].Length);
+			Assert.Equal("aaa", lines[0][0]);
+			Assert.Equal("bbb", lines[0][1]);
+
+			Assert.Equal(2, lines[1].Length);
+			Assert.Equal("", lines[1][0]);
+			Assert.Equal("ccc", lines[1][1]);
+		}
+
+		[Fact]
+		public void EmptyLinesAreIgnored_AtEnd()
+		{
+			var parser = new CsvParser();
+
+			// Set up empty lines at start, middle, and end:
+			string[][] lines = parser.Parse("aaa\n").ToArray();
+
+			Assert.Equal(1, lines.Length);
+		}
+
+		[Fact]
 		public void EmptyLinesAreIgnored()
 		{
 			var parser = new CsvParser();

@@ -2,33 +2,28 @@
 
 open FParsec
 open System
-
-let (<!>) (p: Parser<_,_>) label : Parser<_,_> =
-    fun stream ->
-        printfn "%A: Entering %s" stream.Position label
-        let reply = p stream
-        printfn "%A: Leaving %s (%A)" stream.Position label reply.Status
-        reply
+open CsvParser
+open ParsingUtils
 
 let ws = spaces
+let inline_ws = manySatisfy (function ' '|'\t' -> true | _ -> false) |>> ignore
 let str s = pstring s
-let str_ws s = str s .>> ws
+let str_inline_ws s = str s .>> inline_ws
 
 let nonQuoteChars = manySatisfy (fun c -> c <> '"')
 let escapedQuote = stringReturn "\"\"" "\""
-let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) .>> ws // <!> "quoted field"
+let quotedField = between (str "\"") (str "\"") (stringsSepBy nonQuoteChars escapedQuote) .>> inline_ws <!> "quoted field"
 
-let nonSpaceOrSep = manySatisfy (function ','|'\n'|' '|'\t' -> false | _ -> true) // <!> "nonSpaceOrSep"
-let allowedInterCharSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false) // <!> "allowedSpaces"
-let unquotedField = stringsSepBy nonSpaceOrSep allowedInterCharSpaces |>> (fun s -> s.TrimEnd([|' ';'\t'|])) // <!> "unquoted field"
-//let unquotedField = manyCharsTill (noneOf ",\n") (pchar ',') << doesn't work because it consumes the comma
+let nonSpaceOrSep = manySatisfy (function '|'|'\n'|' '|'\t' -> false | _ -> true) <!> "nonSpaceOrSep"
+let allowedInterCharSpaces = many1Satisfy (function ' '|'\t' -> true | _ -> false) <!> "allowedSpaces"
+let unquotedField = stringsSepBy nonSpaceOrSep allowedInterCharSpaces |>> (fun s -> s.TrimEnd([|' ';'\t'|])) <!> "unquoted field"
 
 let csvValue, csvValueRef = createParserForwardedToRef()
 
-let line = sepBy csvValue (str_ws ",")
+let line = sepBy csvValue (str_inline_ws "|") <!> "line"
 
 do csvValueRef := choice[quotedField
-                         unquotedField] // <!> "csvValueRef"
+                         unquotedField] <!> "csvValueRef"
 
 let csv = ws >>. sepBy line newline .>> ws .>> eof
 
@@ -51,15 +46,15 @@ let internal runParserOnStream (parser: Parser<'Result,'UserState>) (ustate: 'Us
 
 let parseString csvString =
     match run csv csvString with
-        | Failure(errorMsg, _, _) -> raise (new Exception(sprintf "Parsing error: %s" errorMsg))
+        | Failure(errorMsg, _, _) -> raise (new CsvParsingException(sprintf "Parsing error: %s" errorMsg))
         | Success(results, _, _) -> results
 
 let parseStream stream encoding =
     match runParserOnStream csv () stream encoding with
-        | Failure(errorMsg, _, _) -> raise (new Exception(sprintf "Parsing error: %s" errorMsg))
+        | Failure(errorMsg, _, _) -> raise (new CsvParsingException(sprintf "Parsing error: %s" errorMsg))
         | Success(results, _, _) -> results
 
 let parseCharStream charStream =
     match applyParser csv charStream with
-        | Failure(errorMsg, _, _) -> raise (new Exception(sprintf "Parsing error: %s" errorMsg))
+        | Failure(errorMsg, _, _) -> raise (new CsvParsingException(sprintf "Parsing error: %s" errorMsg))
         | Success(results, _, _) -> results
