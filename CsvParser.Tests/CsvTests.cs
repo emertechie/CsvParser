@@ -12,7 +12,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseBasicUnquotedValuesWithNoWhitespace()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("aaa|bbb");
 
@@ -25,9 +25,24 @@ namespace CsvParser.Tests
 		}
 
 		[Fact]
+		public void CanParseBasicUnquotedValuesWithNoWhitespace_WithDifferentDelimeter()
+		{
+			var parser = CreateCsvParser(delimeter: ',');
+
+			IEnumerable<string[]> lines = parser.Parse("aaa,bbb");
+
+			Assert.Equal(1, lines.Count());
+			var line = lines.Single();
+
+			Assert.Equal(2, line.Length);
+			Assert.Equal("aaa", line[0]);
+			Assert.Equal("bbb", line[1]);
+		}
+
+		[Fact]
 		public void SpacesAreRemovedFromAroundUnquotedValues()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse(" a | b ");
 
@@ -43,7 +58,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void TabsAreRemovedFromAroundUnquotedValues()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse(" aaa\t| bbb \t");
 
@@ -59,7 +74,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void WhitespaceInMiddleOfUnquotedValuesIsPreserved()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("a a a|b b b");
 
@@ -74,7 +89,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseBasicQuotedValuesWithNoWhitespace()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("\"aaa\"|\"bbb\"");
 
@@ -89,7 +104,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void WhiteSpaceWithinQuotesIsPreserved()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("\" aaa\t\"|\"\tbbb \"");
 
@@ -104,7 +119,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void WhiteSpaceSurroundingQuotesIsIgnored()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse(" \" aaa\t\"\t|\t\"\tbbb \" ");
 
@@ -119,7 +134,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseLineWithMixedQuotedAndNonQuotedValues()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("aaa|\"bbb\"|ccc");
 
@@ -135,7 +150,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void EscapedQuotesWithinQuotesArePreserved()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("aaa|\"\"\"bbb\"\"\"");
 
@@ -150,7 +165,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void NewlineWithinQuotesIsPreserved()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("aaa|\"b1\nb2\nb3\"|ccc");
 
@@ -166,7 +181,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void DelimeterWithinQuotesIsPreserved()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("aaa|\"b1,b2\"|ccc");
 
@@ -182,7 +197,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void EmptyFieldsAreReturnedAsEmptyStrings()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			IEnumerable<string[]> lines = parser.Parse("aaa||ccc");
 
@@ -198,7 +213,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseMultipleLines()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			string[][] lines = parser.Parse("aaa|bbb\nccc|ddd").ToArray();
 
@@ -216,7 +231,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseMultipleLines_WithQuotesInLastValue()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			string[][] lines = parser.Parse("aaa|\"bbb\"\nccc|\"ddd\"").ToArray();
 
@@ -234,7 +249,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseMultipleLines_AllQuoted()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			string[][] lines = parser.Parse("\"aaa\"|\"bbb\"\n\"ccc\"|\"ddd\"").ToArray();
 
@@ -252,7 +267,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseMultipleLines_AllWithEscapedQuotes()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			string[][] lines = parser.Parse("\"\"\"aaa\"\"\"|\"\"\"bbb\"\"\"\n\"\"\"ccc\"\"\"|\"\"\"ddd\"\"\"").ToArray();
 
@@ -270,7 +285,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void CanParseMultipleLines_WithSeparatorAtBeginningOfSecondLine()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			string[][] lines = parser.Parse("aaa|bbb\n|ccc").ToArray();
 
@@ -288,7 +303,7 @@ namespace CsvParser.Tests
 		[Fact(Skip="TODO")]
 		public void EmptyLinesAreIgnored()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			// Set up empty lines at start, middle, and end:
 			string[][] lines = parser.Parse("\n\naaa|bbb\n\nccc|ddd\n\n").ToArray();
@@ -307,7 +322,7 @@ namespace CsvParser.Tests
 		[Fact]
 		public void LinesWithDifferentColumnCountsAreHandledWithoutError()
 		{
-			var parser = new CsvParser();
+			var parser = CreateCsvParser();
 
 			string[][] lines = parser.Parse("aaa|bbb\nccc|ddd|eee\nfff").ToArray();
 
@@ -324,6 +339,11 @@ namespace CsvParser.Tests
 
 			Assert.Equal(1, lines[2].Length);
 			Assert.Equal("fff", lines[2][0]);
+		}
+
+		private static CsvParser CreateCsvParser(char delimeter = '|')
+		{
+			return new CsvParser(delimeter);
 		}
 	}
 }
