@@ -9,5 +9,8 @@ _ReSharper*\*
 *.dotCover
 Backup\*
 build\*
+_build\*
 packages\*
 *.swp
+*.*~
+**\StyleCop.Cache
