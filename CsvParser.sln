@@ -1,10 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CsvParser", "CsvParser\CsvParser.fsproj", "{AED3C590-AA9A-453C-9D71-AD64FD7ED79D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvParser.Tests", "CsvParser.Tests\CsvParser.Tests.csproj", "{D231AB8E-1D4A-4793-BBCC-558B9E3BE832}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2F59A9EB-B907-4B56-8F44-433DC2EB242B}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -12,6 +8,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2F59A9
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CsvParser", "CsvParser\CsvParser.fsproj", "{AED3C590-AA9A-453C-9D71-AD64FD7ED79D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvParser.Tests", "CsvParser.Tests\CsvParser.Tests.csproj", "{D231AB8E-1D4A-4793-BBCC-558B9E3BE832}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
