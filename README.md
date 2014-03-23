@@ -8,14 +8,16 @@ Parser works fine, but there are some outstanding issues:
 * Parser may return empty lines. Especially at the end of file. You will have to filter those out yourself for now
 * I have to include a custom build of FParsec at the moment. Waiting on a new Nuget build which will include a fix I made for the CharStream class
 
-== Installation == 
+Installation
+------------
 
 Available on NuGet:
 ```
 Install-Package CsvParser
 ```
 
-== Usage ==
+Usage
+-----
 
 ```C#
 var parser = new CsvParser(delimeter: '|');
