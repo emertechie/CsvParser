@@ -6,7 +6,7 @@
 		<title>CsvParser</title>
 		<authors>Andrew Smith</authors>
 		<owners>Andrew Smith</owners>
-		<projectUrl>https://bitbucket.org/emertechie/csvparser</projectUrl>
+		<projectUrl>https://github.com/emertechie/CsvParser</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Simple CsvParser which can parse strings or files. Understands quoted and unquoted values.</description>
 		<copyright>Copyright 2012</copyright>
